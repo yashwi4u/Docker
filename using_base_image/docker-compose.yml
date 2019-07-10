@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  mysql_cont:
+    image: mysql
+    volumes:
+      - container-volume:/var/lib/mysql
+      #- ./InsertDataScript/create_db_user.sql:/docker-entrypoint-initdb.d/create_db_user.sql
+      #- ~/docker_data/:/myfiles/
+      #- ./mysql.conf:/etc/mysql/my.cnf
+    environment:
+      MYSQL_ROOT_PASSWORD: acciom_password
+      MYSQL_DATABASE: acciom_db
+      MYSQL_USER: acciom_user
+      MYSQL_PASSWORD: acciom_password
+    ports:
+     - "3306:3306"
+     - "5000:5000"
+    expose:
+      - "5000"
+      - "3306"
+  acciom:
+    restart: always
+    build: .
+    depends_on:
+      - mysql_cont
+
+    volumes:
+      - /bindmount:/myfiles
+    #command: >
+    #  bash -c "python3 InsertDataScript/create_table_script_d.py
+    #  && python3 InsertDataScript/create_table_script_s.py"
+
+volumes:
+  container-volume:
